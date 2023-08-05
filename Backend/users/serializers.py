@@ -1,26 +1,17 @@
-from rest_framework import serializers, request
+from rest_framework import serializers
 from django.contrib.auth.models import update_last_login
 from rest_framework.authentication import authenticate
 from rest_framework.validators import ValidationError
-from .models import CustomUser, Organizations, Workers
-import string
-import random
+from .models import CustomUser, Organizations, Workers, Attendance, Qrcode
 from rest_framework_simplejwt.tokens import RefreshToken
-
-
-#Generate random password for workers
-# def generate_random_password():
-#     # get random password of length 8 with letters, digits, and symbols
-#     characters = string.ascii_letters + string.digits + string.punctuation
-#     password = ''.join(random.choice(characters) for i in range(12))
-#     return password
+from datetime import *
 
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = [
-            'id', 'email', 'is_organization', 'is_worker'
+            'id', 'email', 'username', 'is_organization', 'is_worker'
         ]
 
 
@@ -46,7 +37,8 @@ class OrganizationRegisterSerializer(serializers.ModelSerializer):
         
     def save(self, **kwargs):
         user = CustomUser(
-            email = self.validated_data['email']
+            email = self.validated_data['email'],
+            username = self.validated_data['name']
         )
         password = self.validated_data['password']
         confirm_password = self.validated_data['confirm_password']
@@ -79,7 +71,6 @@ class CustomLoginSerializer(serializers.ModelSerializer):
         email = data['email']
         password = data['password']
         user = authenticate(email=email, password=password)
-    
         if user is None:
             raise serializers.ValidationError("Invalid login credentials")
 
@@ -94,6 +85,7 @@ class CustomLoginSerializer(serializers.ModelSerializer):
                 'access': access_token,
                 'refresh': refresh_token,
                 'email': user.email,
+                'username': user.username,
             }
 
             return validation
@@ -129,14 +121,13 @@ class AddWorkerSerializer(serializers.ModelSerializer):
        
     def get_current_organization(self):
         current_organization = self.context['request'].user
-        get_current_organization_id = list(CustomUser.organization.filter(email=current_organization).values('id'))
-        organization_user_id = get_current_organization_id[0]['id']
-        organization= Organizations.objects.get(user_id=organization_user_id)
-        return organization
+        current_organization_object = Organizations.objects.get(user=current_organization)
+        return current_organization_object
         
     def save(self, **kwargs):
         user = CustomUser(
             email = self.validated_data['email'],
+            username = self.validated_data['first_name'] + self.validated_data['last_name']
         )
         password = self.validated_data['password']
         confirm_password = self.validated_data['confirm_password']
@@ -160,3 +151,27 @@ class AddWorkerSerializer(serializers.ModelSerializer):
         worker.save()
         return user
     
+class AttendanceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Attendance
+        fields = '__all__'
+        
+ 
+class WorkersSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Workers
+        fields = '__all__'
+        
+class OrganizationSerializer(serializers.ModelSerializer):
+    organization_workers = WorkersSerializer(many=True)
+    class Meta:
+        model = Organizations
+        fields = '__all__'
+
+class QrcodeSerializer(serializers.ModelSerializer):
+    organization = serializers.ReadOnlyField()
+    UUID = serializers.CharField(read_only=True)
+    class Meta:
+        model = Qrcode
+        fields ='__all__'
+        

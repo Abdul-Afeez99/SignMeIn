@@ -52,12 +52,13 @@ const footerLinks = [
 
 function Footer() {
   return (
-    <footer className="container mx-auto px-5 grid md:grid-cols-5 gap-5">
+    <footer className="container mx-auto px-5 grid md:grid-cols-5 gap-5 py-6 md:py-12 ">
       <div className="md:col-span-2 space-y-4">
         <h1 className="text-xl md:text-2xl font-bold text-primary">SignMeIn</h1>
         <p>
-          we help you keep track of your employee promptness with modern
-          technology, save cost and increase workers efficiency
+          Empower your business with modern technology to track employee
+          promptness, save costs, and enhance worker efficiency - Start
+          optimizing your workforce today!
         </p>
       </div>
       <div className="md:col-span-3 flex flex-wrap justify-between gap-4">

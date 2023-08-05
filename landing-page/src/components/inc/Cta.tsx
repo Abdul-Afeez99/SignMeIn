@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 import { Button } from "../base";
 
@@ -22,11 +23,13 @@ function Cta() {
         />
         <div className="flex flex-col items-center gap-6 py-24 px-5">
           <h1 className="text-white text-2xl md:text-5xl max-w-[700px] text-center font-bold">
-            Wants to keep your employee promptness and save cost
+            Boost promptness, streamline attendance, save costs with SignMeIn.
           </h1>
-          <Button size={{ initial: "md", md: "lg" }} color="light">
-            Get started now
-          </Button>
+          <Link href="/signup">
+            <Button size={{ initial: "md", md: "lg" }} color="light">
+              Get started now
+            </Button>
+          </Link>
         </div>
       </div>
     </div>

@@ -1,9 +1,13 @@
 import { Footer, Navbar, SignupForm } from "@/components/inc";
+import Head from "next/head";
 import Image from "next/image";
-1;
-export default function Home() {
-  return ( 
+
+export default function SignUp() {
+  return (
     <>
+      <Head>
+        <title>SignMeIn | Sign Up</title>
+      </Head>
       <Navbar />
       <main>
         <div className="bg-white min-h-[calc(100vh_-_96px)] px-5 flex items-center justify-center relative isolate">
@@ -25,8 +29,10 @@ export default function Home() {
             <h1 className="text-3xl font-bold text-center">
               Create your account
             </h1>
-            <p className="text-center text-gray-500 mt-2">Let’s get you started with you started</p>
-            <SignupForm/>
+            <p className="text-center text-gray-500 mt-2">
+              Let’s get you started with you started
+            </p>
+            <SignupForm />
           </div>
         </div>
       </main>
